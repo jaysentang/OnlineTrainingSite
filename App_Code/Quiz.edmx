@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="daifukuModel2.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.7" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="answer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Text" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsAnswer" Type="bool" Nullable="false" />
+          <Property Name="QuestionId" Type="varchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="coursesection">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Header" Type="varchar" MaxLength="256" />
+          <Property Name="SectionOrder" Type="int" />
+          <Property Name="Quiz" Type="bool" />
+          <Property Name="ProjectId" Type="varchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="exam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Header" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="TotalPoints" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Text" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="ExamId" Type="varchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <Association Name="ExamId">
+          <End Role="exam" Type="Self.exam" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="question" Type="Self.question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="question">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="examsectionId">
+          <End Role="coursesection" Type="Self.coursesection" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="exam" Type="Self.exam" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="coursesection">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="exam">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="QuestionId">
+          <End Role="question" Type="Self.question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="answer" Type="Self.answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="question">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="answer">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="daifukuModel2StoreContainer">
+          <EntitySet Name="answer" EntityType="Self.answer" Schema="daifuku" store:Type="Tables" />
+          <EntitySet Name="coursesection" EntityType="Self.coursesection" Schema="daifuku" store:Type="Tables" />
+          <EntitySet Name="exam" EntityType="Self.exam" Schema="daifuku" store:Type="Tables" />
+          <EntitySet Name="question" EntityType="Self.question" Schema="daifuku" store:Type="Tables" />
+          <AssociationSet Name="ExamId" Association="Self.ExamId">
+            <End Role="exam" EntitySet="exam" />
+            <End Role="question" EntitySet="question" />
+          </AssociationSet>
+          <AssociationSet Name="examsectionId" Association="Self.examsectionId">
+            <End Role="coursesection" EntitySet="coursesection" />
+            <End Role="exam" EntitySet="exam" />
+          </AssociationSet>
+          <AssociationSet Name="QuestionId" Association="Self.QuestionId">
+            <End Role="question" EntitySet="question" />
+            <End Role="answer" EntitySet="answer" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="daifukuModel2" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="answer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IsAnswer" Type="Boolean" Nullable="false" />
+          <Property Name="QuestionId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="question" Relationship="Self.QuestionId" FromRole="answer" ToRole="question" />
+        </EntityType>
+        <EntityType Name="exam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Header" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TotalPoints" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="questions" Relationship="Self.ExamId" FromRole="exam" ToRole="question" />
+          <NavigationProperty Name="coursesection" Relationship="daifukuModel2.examsectionId" FromRole="exam" ToRole="coursesection" />
+        </EntityType>
+        <EntityType Name="question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ExamId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="answers" Relationship="Self.QuestionId" FromRole="question" ToRole="answer" />
+          <NavigationProperty Name="exam" Relationship="Self.ExamId" FromRole="question" ToRole="exam" />
+        </EntityType>
+        <Association Name="QuestionId">
+          <End Role="question" Type="Self.question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="answer" Type="Self.answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="question">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="answer">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ExamId">
+          <End Role="exam" Type="Self.exam" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="question" Type="Self.question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="question">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="answers" EntityType="Self.answer" />
+          <EntitySet Name="exams" EntityType="Self.exam" />
+          <EntitySet Name="questions" EntityType="Self.question" />
+          <AssociationSet Name="QuestionId" Association="Self.QuestionId">
+            <End Role="question" EntitySet="questions" />
+            <End Role="answer" EntitySet="answers" />
+          </AssociationSet>
+          <AssociationSet Name="ExamId" Association="Self.ExamId">
+            <End Role="exam" EntitySet="exams" />
+            <End Role="question" EntitySet="questions" />
+          </AssociationSet>
+          <EntitySet Name="coursesections" EntityType="daifukuModel2.coursesection" />
+          <AssociationSet Name="examsectionId" Association="daifukuModel2.examsectionId">
+            <End Role="coursesection" EntitySet="coursesections" />
+            <End Role="exam" EntitySet="exams" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="coursesection">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Header" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="SectionOrder" Type="Int32" />
+          <Property Name="Quiz" Type="Boolean" />
+          <NavigationProperty Name="exam" Relationship="daifukuModel2.examsectionId" FromRole="coursesection" ToRole="exam" />
+          <Property Name="ProjectId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="examsectionId">
+          <End Type="daifukuModel2.coursesection" Role="coursesection" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="daifukuModel2.exam" Role="exam" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="coursesection">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="exam">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="daifukuModel2StoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="answers">
+            <EntityTypeMapping TypeName="daifukuModel2.answer">
+              <MappingFragment StoreEntitySet="answer">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="IsAnswer" ColumnName="IsAnswer" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="exams">
+            <EntityTypeMapping TypeName="daifukuModel2.exam">
+              <MappingFragment StoreEntitySet="exam">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="TotalPoints" ColumnName="TotalPoints" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="questions">
+            <EntityTypeMapping TypeName="daifukuModel2.question">
+              <MappingFragment StoreEntitySet="question">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="ExamId" ColumnName="ExamId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="coursesections">
+            <EntityTypeMapping TypeName="daifukuModel2.coursesection">
+              <MappingFragment StoreEntitySet="coursesection">
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="Quiz" ColumnName="Quiz" />
+                <ScalarProperty Name="SectionOrder" ColumnName="SectionOrder" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
